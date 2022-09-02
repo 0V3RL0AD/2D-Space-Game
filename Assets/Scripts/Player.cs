@@ -18,6 +18,8 @@ public class Player : MonoBehaviour
     [SerializeField]
     private int _Lives = 3;
     [SerializeField]
+    public int _Score;
+    [SerializeField]
     private SpawnManager _SpawnManager;
     [SerializeField]
     private GameObject _Triple_ShotPrefab;
@@ -30,32 +32,15 @@ public class Player : MonoBehaviour
     [SerializeField]
     private GameObject _ShieldVisualiserPrefab;
     [SerializeField]
-    private bool _ShieldVisualiser = false;
-    public void Damage()
-    {
-        if (_ShieldActive == true)
-        {
-            _ShieldActive = false;
-            _ShieldVisualiser = false;
-            return;
-        }
-        else
-        {
-            _Lives = _Lives - 1;
+    private UIManager _uiManager;
 
-            if (_Lives < 1)
-            {
-                _SpawnManager.OnPlayerDeath();
-                Destroy(this.gameObject);
-            }
-        }
-    }
     void Start()
     {
         transform.position = new Vector3(-0.06f, -2.82f, 0);
         _SpawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
+        //connects the UI script to the enemy through finding the player gameobject and getting it's script
+        _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
     }
-
     void Update()
     {
         CalculateMovement();
@@ -64,6 +49,33 @@ public class Player : MonoBehaviour
             FireLaser();
         }
     }
+    public void Damage()
+    {
+        if (_ShieldActive == true)
+        {
+            _ShieldActive = false;
+            _ShieldVisualiserPrefab.SetActive(false);
+            return;
+        }
+        else
+        {
+            _Lives = _Lives - 1;
+            _uiManager.UpdateLives(_Lives);
+
+            if (_Lives < 1)
+            {
+                _SpawnManager.OnPlayerDeath();
+                Destroy(this.gameObject);
+            }
+        }
+    }
+    public void ScoreUp(int points)
+    {
+        _Score += points;
+        _uiManager.ScoreUpdate(_Score);
+    }
+
+
     void CalculateMovement()
     {
         float horizontalInput = Input.GetAxis("Horizontal");
@@ -124,7 +136,7 @@ public class Player : MonoBehaviour
         yield return null;
         while (_SpeedUpActive == true)
         {
-            yield return new WaitForSeconds(5.0f);
+            yield return new WaitForSeconds(7.0f);
             _SpeedUpActive = false;
         }
     }
@@ -138,16 +150,16 @@ public class Player : MonoBehaviour
         yield return null;
         while (_TripleShotActive == true)
         {
-            yield return new WaitForSeconds(5.0f);
+            yield return new WaitForSeconds(7.0f);
             _TripleShotActive = false;
         }
     }
     public void ShieldActive()
     {
         _ShieldActive = true;
-        _ShieldVisualiser = true;
-        Instantiate(_ShieldVisualiserPrefab, transform.position, Quaternion.identity);
+        _ShieldVisualiserPrefab.SetActive(true);
     }
+
     /*IEnumerator ShieldDownRoutine()
     {
         yield return null;

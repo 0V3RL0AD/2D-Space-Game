@@ -39,9 +39,11 @@ public class SpawnManager : MonoBehaviour
         {
             //spawn position of the enemies that spawn
             Vector3 SpawnPosition = new Vector3(Random.Range(-8f, 8f), 7, 0);
-            //making the enemy prefab apply to the spawn position as the gameObject newEnemy
+            //In order to control the instatiated Enemies (as they cannot be due to the laws of instantiate) create a GameObject variable to handle its information.
+            //Using the variable, apply the position and rotation of every spawned enemy.
             GameObject newEnemy = Instantiate(_enemy, SpawnPosition, Quaternion.identity);
-            //connnecting the gameobject of enemies spawning (newEnemy) to the enemy container to make it spawn in the container
+            //Making the gameobject variable's parent the enemy container so that it spawns within the enemy container.
+            //This ensures they are forever in the exact same position
             newEnemy.transform.parent = _enemyContainer.transform;
             //making the spawn manager wait 2 seconds
             yield return new WaitForSeconds(2.0f);
