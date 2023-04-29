@@ -1,5 +1,5 @@
 # 2D-Space-Game
- My version of the award-winning Space Invaders in Unity
+ My version of the award-winning Space Invaders in Unity, inspired from Jonathan Weinberger's Ultimate Guide to Unity
 
 # Controls
 W - Move Upwards
