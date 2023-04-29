@@ -33,13 +33,32 @@ public class Player : MonoBehaviour
     private GameObject _ShieldVisualiserPrefab;
     [SerializeField]
     private UIManager _uiManager;
+    [SerializeField]
+    private bool _Damage_1_Active = false;
+    [SerializeField]
+    private bool _Damage_2_Active = false;
+    [SerializeField]
+    private GameObject _Damage_1_Visual;
+    [SerializeField]
+    private GameObject _Damage_2_Visual;
+    [SerializeField]
+    private AudioClip _Laser_Sound;
+    [SerializeField]
+    private AudioClip _Explosion_Sound;
+    private AudioSource _audioSource;
 
     void Start()
     {
         transform.position = new Vector3(-0.06f, -2.82f, 0);
         _SpawnManager = GameObject.Find("Spawn_Manager").GetComponent<SpawnManager>();
-        //connects the UI script to the enemy through finding the player gameobject and getting it's script
+        //connects the UI Manager Script to the player to update the canvas
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
+        _audioSource = GetComponent<AudioSource>();
+        if (_audioSource == null)
+        {
+            Debug.Log("bro there's nothing here");
+        }
+
     }
     void Update()
     {
@@ -60,14 +79,35 @@ public class Player : MonoBehaviour
         else
         {
             _Lives = _Lives - 1;
+            DamageActive();
             _uiManager.UpdateLives(_Lives);
 
             if (_Lives < 1)
             {
                 _SpawnManager.OnPlayerDeath();
-                Destroy(this.gameObject);
+                _audioSource.PlayOneShot(_Explosion_Sound, 1F);
+                Destroy(this.gameObject, 0.75f);
+
             }
+            /*else
+            {
+                // Generate a random number between 1 and 2
+                int randomDamage = Random.Range(1, 3);
+
+                // Activate damage 1 or damage 2 based on the random number
+                if (randomDamage == 1)
+                {
+                    _Damage_1_Active = true;
+                    _Damage_1_Visual.SetActive(true);
+                }
+                else
+                {
+                    _Damage_2_Active = true;
+                    _Damage_2_Visual.SetActive(true);
+                }
+            }*/
         }
+
     }
     public void ScoreUp(int points)
     {
@@ -78,7 +118,9 @@ public class Player : MonoBehaviour
 
     void CalculateMovement()
     {
+        //Gives User input - Left and Right
         float horizontalInput = Input.GetAxis("Horizontal");
+        //Gives User Input - Up and Down
         float verticalInput = Input.GetAxis("Vertical");
 
         if (_SpeedUpActive == false)
@@ -124,6 +166,7 @@ public class Player : MonoBehaviour
             {
                 Instantiate(_LaserPrefab, transform.position + new Vector3(0, 1.05f, 0), Quaternion.identity);
             }
+        _audioSource.PlayOneShot(_Laser_Sound, 1F);
     }
    
     public void SpeedUpActive()
@@ -160,6 +203,22 @@ public class Player : MonoBehaviour
         _ShieldVisualiserPrefab.SetActive(true);
     }
 
+    public void DamageActive()
+    {
+        int randomDamage = Random.Range(0, 1);
+        if (randomDamage == 0)
+        {
+            _Damage_1_Active = true;
+            _Damage_1_Visual.SetActive(true);
+        }
+        else
+        {
+            _Damage_2_Active = true;
+            _Damage_2_Visual.SetActive(true);
+        }
+    }
+
+    //makes the shield have a countdown
     /*IEnumerator ShieldDownRoutine()
     {
         yield return null;

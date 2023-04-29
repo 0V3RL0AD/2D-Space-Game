@@ -7,15 +7,31 @@ public class Enemy : MonoBehaviour
 {
     // Start is called before the first frame update
     [SerializeField]
-    private float _Speed = 3f;
+    private float _Speed;
     [SerializeField]
     private Player _player;
+    private Animator Enemy_Anim;
+    [SerializeField]
+    private AudioClip _Explosion_Sound;
+    private AudioSource _audioSource;
 
     void Start()
     {
+        _audioSource = GetComponent<AudioSource>();
         //connects the player script to the enemy through finding the player gameobject and getting it's script
         _player = GameObject.Find("Player").GetComponent<Player>();
-        
+        //null check player
+        if (_player == null)
+        {
+            Debug.LogError("Player = null");
+        }
+        Enemy_Anim = gameObject.GetComponent<Animator>();
+        //null check animator
+        if (Enemy_Anim == null)
+        {
+            Debug.LogError("Animator = null");
+        }
+
     }
 
     // Update is called once per frame
@@ -35,6 +51,7 @@ public class Enemy : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
+        
         if (other.tag == "Laser")
         {
             //adds score to player when laser hits the enemy
@@ -43,7 +60,11 @@ public class Enemy : MonoBehaviour
             {
                 _player.ScoreUp(10);
             }
-            Destroy(this.gameObject);
+            _audioSource.PlayOneShot(_Explosion_Sound, 1F);
+            Enemy_Anim.SetTrigger("OnEnemyDeath");
+            _Speed = 0;
+            //changed to destory after certain time has passed (2.5 seconds - just longer than the destruction animation)
+            Destroy(this.gameObject, 2.5f);
             
             
         }
@@ -51,12 +72,16 @@ public class Enemy : MonoBehaviour
         {
             //Player player = other.transform.GetComponent<Player>();
             other.transform.GetComponent<Player>().Damage();
-            
+
             /*if (player!= null)
             {
                 player.Damage();
             }*/
-            Destroy(this.gameObject);
+            _audioSource.PlayOneShot(_Explosion_Sound, 1F);
+            Enemy_Anim.SetTrigger("OnEnemyDeath");
+            _Speed = 0;
+            //changed to destroy after certain time has passed (2.5 seconds - just longer than the destruction animation)
+            Destroy(this.gameObject, 2.5f);
         }
     }
 }

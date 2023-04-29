@@ -12,10 +12,14 @@ public class PowerUp : MonoBehaviour
     // 2 = shields
     [SerializeField]
     private int powerupID;
+    [SerializeField]
+    private AudioClip _Power_Up_Sound;
+
     // Start is called before the first frame update
     void Start()
     {
         transform.position = new Vector3(Random.Range(10, -10), 6, 0);
+        
     }
 
     // Update is called once per frame
@@ -37,6 +41,7 @@ public class PowerUp : MonoBehaviour
         if (other.tag == "Player")
         {
             //other.transform.GetComponent<Player>().TripleShotActive();
+            AudioSource.PlayClipAtPoint(_Power_Up_Sound, transform.position);
             if (other.tag != null)
             {
                 if (powerupID == 0)
@@ -68,6 +73,7 @@ public class PowerUp : MonoBehaviour
                         break;
                 }
             }
+            
             Destroy(this.gameObject);
         }
     }

@@ -17,19 +17,13 @@ public class SpawnManager : MonoBehaviour
     private GameObject _ShieldUpPrefab;
     [SerializeField]
     private bool _PlayerDead = false;
-    // Start is called before the first frame update
-    void Start()
+    
+    public void StartSpawning()
     {
         StartCoroutine(SpawnEnemyRoutine());
         StartCoroutine(SpawntripleShotRoutine());
         StartCoroutine(SpeedupRoutine());
         StartCoroutine(ShieldupRoutine());
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-       
     }
 
     IEnumerator SpawnEnemyRoutine()
@@ -39,7 +33,7 @@ public class SpawnManager : MonoBehaviour
         {
             //spawn position of the enemies that spawn
             Vector3 SpawnPosition = new Vector3(Random.Range(-8f, 8f), 7, 0);
-            //In order to control the instatiated Enemies (as they cannot be due to the laws of instantiate) create a GameObject variable to handle its information.
+            //In order to control the instatiated Enemies (as they cannot be manually controlled due to the laws of instantiate) create a GameObject variable to handle its information.
             //Using the variable, apply the position and rotation of every spawned enemy.
             GameObject newEnemy = Instantiate(_enemy, SpawnPosition, Quaternion.identity);
             //Making the gameobject variable's parent the enemy container so that it spawns within the enemy container.

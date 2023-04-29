@@ -42,6 +42,8 @@ public class UIManager : MonoBehaviour
             IsGameOver();
         }
     }
+
+    //activate the game over stuff since player dead
     void IsGameOver()
     {
         _gameManager.GameOver();
@@ -50,6 +52,7 @@ public class UIManager : MonoBehaviour
         StartCoroutine(GameOverFlicker());
     }
 
+    //make the game over text flicker
     IEnumerator GameOverFlicker()
     {
         while (true)
